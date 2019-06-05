@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".BookingActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:adjustViewBounds="true"
+        android:alpha="0.8"
+        android:cropToPadding="false"
+        android:scaleType="fitXY"
+        android:src="@drawable/poster"
+        android:visibility="visible" />
+
+    <LinearLayout android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:padding="15dp">
+        <include layout="@layout/top_nav"/>
+        <include layout="@layout/showtime_info"/>
+        <include layout="@layout/seat_types"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/screen"/>
+
+
+        <include layout="@layout/fill_linearlayout"/>
+
+        <include layout="@layout/seat_container"/>
+
+        <include layout="@layout/fill_linearlayout"/>
+
+        <include layout="@layout/total_payment"/>
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:backgroundTint="#0C4CA8"
+        app:srcCompat="@drawable/baseline_done_white_18dp" />
+
+</FrameLayout>

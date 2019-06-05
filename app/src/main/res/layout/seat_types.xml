@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="35dp"
+    android:orientation="horizontal"
+    android:gravity="center">
+    <LinearLayout style="@style/seat_type_container">
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:src="@drawable/circle"
+                android:tint="#EBECED"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Available"
+                android:textSize="10dp"
+                android:textColor="#868E96"
+                android:layout_marginLeft="5dp"/>
+    </LinearLayout>
+
+    <LinearLayout style="@style/seat_type_container">
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:src="@drawable/circle"
+            android:tint="#212224"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Booked"
+            android:textSize="10dp"
+            android:textColor="#868E96"
+            android:layout_marginLeft="5dp"/>
+    </LinearLayout>
+
+    <LinearLayout style="@style/seat_type_container">
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:src="@drawable/circle"
+            android:tint="#0C4CA8"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your Selection"
+            android:textSize="10dp"
+            android:textColor="#868E96"
+            android:layout_marginLeft="5dp"/>
+    </LinearLayout>
+</LinearLayout>
