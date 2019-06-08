@@ -1,10 +1,10 @@
 package com.example.ticketbookingapp;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +12,12 @@ import android.widget.TextView;
 
 import com.example.ticketbookingapp.data.model.Showtime;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CinemaListAdapter extends RecyclerView.Adapter<CinemaListAdapter.CinemaViewHolder> implements ShowtimeSelectionCallback {
     private final List<Cinema> cinemaList;
+    private  List<Parcelable> recyclerViewState = new ArrayList<>();
     private LayoutInflater cinemaListInflater;
     private Integer lastSelectedCinema = -1;
     private Integer selectedCinema = 0;
@@ -26,6 +28,9 @@ public class CinemaListAdapter extends RecyclerView.Adapter<CinemaListAdapter.Ci
         this.cinemaList = cinemaList;
         cinemaListInflater = LayoutInflater.from(context);
         this.context = context;
+        for (int i = 0; i < cinemaList.size(); ++i){
+            recyclerViewState.add(null);
+        }
     }
 
     @NonNull
@@ -40,19 +45,21 @@ public class CinemaListAdapter extends RecyclerView.Adapter<CinemaListAdapter.Ci
         Cinema mCurrent = cinemaList.get(position);
         cinemaViewHolder.cinemaNameView.setText(mCurrent.cinemaName);
 
-        if (cinemaViewHolder.showTimeAdapter == null) {
-            cinemaViewHolder.showTimeAdapter = new ShowTimeAdapter(context, mCurrent.showtimeList, this, position);
-            cinemaViewHolder.cinemaItemView.setAdapter(cinemaViewHolder.showTimeAdapter);
-            cinemaViewHolder.cinemaItemView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-        }
-
         if (position != cinemaViewHolder.showTimeAdapter.cinemaId){
             cinemaViewHolder.showTimeAdapter.passParams(mCurrent.showtimeList, position);
         }
 
-        Log.d("Bind: ", String.valueOf(position));
-        Log.d("InsideID: ", String.valueOf(cinemaViewHolder.showTimeAdapter.cinemaId));
         cinemaViewHolder.showTimeAdapter.notifyDataSetChanged();
+        cinemaViewHolder.linearLayoutManager.onRestoreInstanceState(recyclerViewState.get(position));
+    }
+
+    @Override
+    public void onViewRecycled(@NonNull CinemaViewHolder holder) {
+        final int position = holder.showTimeAdapter.cinemaId;
+        Parcelable recyclerViewState = holder.cinemaItemView.getLayoutManager().onSaveInstanceState();
+        this.recyclerViewState.set(position, recyclerViewState);
+
+        super.onViewRecycled(holder);
     }
 
     @Override
@@ -91,6 +98,7 @@ public class CinemaListAdapter extends RecyclerView.Adapter<CinemaListAdapter.Ci
         public final RecyclerView cinemaItemView;
         public final TextView cinemaNameView;
         public ShowTimeAdapter showTimeAdapter;
+        public LinearLayoutManager linearLayoutManager;
         final public CinemaListAdapter cinemaListAdapter;
 
 
@@ -99,6 +107,12 @@ public class CinemaListAdapter extends RecyclerView.Adapter<CinemaListAdapter.Ci
             cinemaItemView = itemView.findViewById(R.id.time_selection);
             cinemaNameView = itemView.findViewById(R.id.cinema_name);
             this.cinemaListAdapter = cinemaListAdapter;
+
+
+            showTimeAdapter = new ShowTimeAdapter(context, cinemaListAdapter);
+            cinemaItemView.setAdapter(showTimeAdapter);
+            linearLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+            cinemaItemView.setLayoutManager(linearLayoutManager);
         }
     }
 }

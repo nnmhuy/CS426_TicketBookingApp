@@ -28,9 +28,17 @@ public class ShowTimeAdapter extends RecyclerView.Adapter<ShowTimeAdapter.TimeVi
         this.cinemaId = cinemaId;
     }
 
+    public ShowTimeAdapter(Context context, ShowtimeSelectionCallback showtimeSelectionCallback) {
+        this.showTimeInflater = LayoutInflater.from(context);
+        this.showtimeSelectionCallback = showtimeSelectionCallback;
+        this.cinemaId = -1;
+
+    }
+
     public void passParams(List<Showtime> showtimeList, int cinemaId) {
         this.showTimeList = showtimeList;
         this.cinemaId = cinemaId;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -48,7 +56,6 @@ public class ShowTimeAdapter extends RecyclerView.Adapter<ShowTimeAdapter.TimeVi
 
         int selectedCinema = showtimeSelectionCallback.getSelectedCinemaId();
         int selectedTime = showtimeSelectionCallback.getSelectedShowtimeId();
-
         if (mCurrent.isAvailable()) {
             if (position == selectedTime && selectedCinema == cinemaId) {
                 holder.timeContainer.setBackgroundResource(R.drawable.selected_border);
