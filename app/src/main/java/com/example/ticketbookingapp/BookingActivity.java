@@ -43,6 +43,7 @@ public class BookingActivity extends AppCompatActivity implements AdapterCallbac
         Intent intent = getIntent();
         String movie_title = intent.getStringExtra("movie_title");
         String showday = intent.getStringExtra("showday");
+        String cinema_name = intent.getStringExtra("cinema_name");
         String showtime = intent.getStringExtra("showtime");
 
         setContentView(R.layout.booking_screen);
@@ -52,6 +53,9 @@ public class BookingActivity extends AppCompatActivity implements AdapterCallbac
 
         TextView showdayView = findViewById(R.id.showday);
         showdayView.setText(showday);
+
+        TextView cinemaNameView = findViewById(R.id.cinema_name);
+        cinemaNameView.setText(cinema_name);
 
         TextView showtimeView = findViewById(R.id.showtime);
         showtimeView.setText(showtime);

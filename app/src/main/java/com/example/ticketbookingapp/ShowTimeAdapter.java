@@ -16,13 +16,21 @@ import com.example.ticketbookingapp.data.model.Showtime;
 import java.util.List;
 
 public class ShowTimeAdapter extends RecyclerView.Adapter<ShowTimeAdapter.TimeViewHolder> {
-    private final List<Showtime> showTimeList;
+    private List<Showtime> showTimeList;
     private LayoutInflater showTimeInflater;
-    private int selectedTime = 0;
+    public int cinemaId;
+    private ShowtimeSelectionCallback showtimeSelectionCallback;
 
-    public ShowTimeAdapter(Context context, List<Showtime> showTimeList) {
+    public ShowTimeAdapter(Context context, List<Showtime> showTimeList, ShowtimeSelectionCallback showtimeSelectionCallback, Integer cinemaId) {
         showTimeInflater = LayoutInflater.from(context);
         this.showTimeList = showTimeList;
+        this.showtimeSelectionCallback = showtimeSelectionCallback;
+        this.cinemaId = cinemaId;
+    }
+
+    public void passParams(List<Showtime> showtimeList, int cinemaId) {
+        this.showTimeList = showtimeList;
+        this.cinemaId = cinemaId;
     }
 
     @NonNull
@@ -37,58 +45,38 @@ public class ShowTimeAdapter extends RecyclerView.Adapter<ShowTimeAdapter.TimeVi
     public void onBindViewHolder(@NonNull final ShowTimeAdapter.TimeViewHolder holder, int position) {
         Showtime mCurrent = showTimeList.get(position);
         holder.timeItemView.setText(String.valueOf(mCurrent.getTime().getHours()) + ":" + String.valueOf(mCurrent.getTime().getMinutes()) );
+
+        int selectedCinema = showtimeSelectionCallback.getSelectedCinemaId();
+        int selectedTime = showtimeSelectionCallback.getSelectedShowtimeId();
+
         if (mCurrent.isAvailable()) {
-            if (position == selectedTime) {
+            if (position == selectedTime && selectedCinema == cinemaId) {
                 holder.timeContainer.setBackgroundResource(R.drawable.selected_border);
                 holder.timeItemView.setTextColor(Color.parseColor("#212224"));
             }
             else {
                 holder.timeContainer.setBackgroundResource(R.drawable.available_border);
                 holder.timeItemView.setTextColor(Color.parseColor("#5E636A"));
-            }
-            holder.timeContainer.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Integer clickedPosition = holder.getAdapterPosition();
-                    if (showTimeList.get(clickedPosition).isAvailable()) {
-                        selectedTime = clickedPosition;
-                        Log.d("Clicked", String.valueOf(clickedPosition));
-                        Log.d("Clicked", holder.timeItemView.getText().toString());
-                        notifyDataSetChanged();
+                holder.timeContainer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d("Inside clicked: ", String.valueOf(cinemaId));
+                        Integer clickedPosition = holder.getAdapterPosition();
+                        showtimeSelectionCallback.seatSelectionCallback(cinemaId, clickedPosition);
                     }
-                }
-            });
+                });
+            }
         } else {
             holder.timeContainer.setBackgroundResource(R.drawable.unavailble_border);
             holder.timeItemView.setTextColor(Color.parseColor("#AFB5BB"));
-//            holder.timeContainer.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    return;
-//                }
-//            });
         }
 
     }
 
     @Override
     public int getItemCount() {
-        return showTimeList.size();
+        return showTimeList != null ? showTimeList.size() : 0;
     }
-
-    public String getSelectedShowtime() {
-        Showtime mCurrent = showTimeList.get(selectedTime);
-        return String.valueOf(mCurrent.getTime().getHours()) + ":" + String.valueOf(mCurrent.getTime().getMinutes());
-    }
-
-    public Integer getSelectedShowtimeId() {
-        return  selectedTime;
-    }
-
-    public void setSelectedShowtime(int showtimeId) {
-        selectedTime = showtimeId;
-    }
-
 
     public class TimeViewHolder extends  RecyclerView.ViewHolder {
         public final TextView timeItemView;

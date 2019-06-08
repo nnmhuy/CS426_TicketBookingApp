@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +14,7 @@ import com.example.ticketbookingapp.data.DummyCinemaShowtimeDataSource;
 import com.example.ticketbookingapp.data.model.MovieInfo;
 import com.example.ticketbookingapp.data.model.Showtime;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,20 +31,17 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView dateRecyclerView;
     private DateAdapter dateAdapter;
 
-    private RecyclerView showTimeRecyclerView;
-    private ShowTimeAdapter showTimeAdapter;
+    private RecyclerView cinemaListRecyclerView;
+    private CinemaListAdapter cinemaListAdapter;
 
     DummyCinemaShowtimeDataSource dataSource;
     CinemaShowtimeRepository dataRepository;
+    private List<Cinema> cinemaList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (this.getResources().getConfiguration().orientation == OrientationHelper.VERTICAL) {
-            setContentView(R.layout.activity_main);
-        } else {
-            setContentView(R.layout.activity_main_horizontal);
-        }
+        setContentView(R.layout.activity_main);
 
         loadData();
 
@@ -71,29 +68,31 @@ public class MainActivity extends AppCompatActivity {
         dateRecyclerView.setAdapter(dateAdapter);
         dateRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        showTimeRecyclerView = findViewById(R.id.time_selection);
-        showTimeAdapter = new ShowTimeAdapter(this, listTimes);
-        showTimeRecyclerView.setAdapter(showTimeAdapter);
-        showTimeRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        cinemaListRecyclerView = findViewById(R.id.cinema_list_view);
+        cinemaListAdapter = new CinemaListAdapter(this, cinemaList);
+        cinemaListRecyclerView.setAdapter(cinemaListAdapter);
+        cinemaListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         Integer selectedDate = dateAdapter.getSelectedDateId();
-        Integer selectedTime = showTimeAdapter.getSelectedShowtimeId();
+        Integer selectedCinema = cinemaListAdapter.getSelectedCinemaId();
+        Integer selectedTime = cinemaListAdapter.getSelectedShowtimeId();
+
 
         outState.putInt("showday", selectedDate);
+        outState.putInt("cinema", selectedCinema);
         outState.putInt("showtime", selectedTime);
-        super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
-            Log.d("here", "yeah");
             dateAdapter.setSelectedDate(savedInstanceState.getInt("showday"));
-            showTimeAdapter.setSelectedShowtime(savedInstanceState.getInt("showtime"));
+            cinemaListAdapter.seatSelectionCallback(savedInstanceState.getInt("cinema"), savedInstanceState.getInt("showtime"));
         }
     }
 
@@ -118,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
         //    get list of showtimes from data repository with starting time. It will get 10 showtimes
         // from dummy data source
         Date startTime = new Date(0, 0, 0, 10, 30);
+
+
         listTimes = dataRepository.getListShowtimes(startTime);
         for (Showtime time : listTimes) {
             Log.d(
@@ -126,15 +127,24 @@ public class MainActivity extends AppCompatActivity {
                             "h:m = %d : %d; is available = %b",
                             time.getTime().getHours(), time.getTime().getMinutes(), time.isAvailable()));
         }
+
+        String[] cinemaNames = {"Sathyam Cinemas: Royapettah", "Escape Cinemas", "Cineplex Movies", "Cineplex Movies 2", "Cineplex Movies 3", "Cineplex Movies 4"};
+        for (int i = 0; i < 6; ++i){
+            Date startingTime = new Date(0, 0, 0, i, (i * 45) % 60);
+            cinemaList.add(new Cinema(cinemaNames[i], dataRepository.getListShowtimes(startingTime)));
+        }
+
     }
 
     public void goNextPage(View view) {
         String selectedDate = dateAdapter.getSelectedDate();
-        String selectedTime = showTimeAdapter.getSelectedShowtime();
+        String selectedCinema = cinemaListAdapter.getSelectedCinema();
+        String selectedTime = cinemaListAdapter.getSelectedShowtime();
 
         Intent intent = new Intent(this, BookingActivity.class);
         intent.putExtra("movie_title", movieInfo.getMovieTitle());
         intent.putExtra("showday", selectedDate);
+        intent.putExtra("cinema_name", selectedCinema);
         intent.putExtra("showtime", selectedTime);
         startActivity(intent);
     }

@@ -4,13 +4,13 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:orientation="horizontal">
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
         android:adjustViewBounds="true"
-        android:alpha="0.8"
         android:cropToPadding="false"
         android:scaleType="fitXY"
         android:src="@drawable/poster"
@@ -18,13 +18,28 @@
 
     <LinearLayout android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:orientation="vertical"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:padding="15dp">
-        <include layout="@layout/top_nav" />
-        <include layout="@layout/movie_info"/>
-        <include layout="@layout/date_selection"/>
-        <include layout="@layout/cinema_time"/>
+        android:orientation="horizontal"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <include layout="@layout/top_nav" />
+        </LinearLayout>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <include layout="@layout/movie_info"/>
+                <include layout="@layout/date_selection"/>
+                <include layout="@layout/cinema_list"/>
+            </LinearLayout>
+        </ScrollView>
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
