@@ -1,5 +1,6 @@
 package com.example.ticketbookingapp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,12 +10,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class BookingActivity extends AppCompatActivity implements AdapterCallback {
     final List<Integer> seatStatus;
+    int numberOfSelectedSeats = 0;
 
     public BookingActivity() {
         seatStatus = Arrays.asList(
@@ -64,6 +67,21 @@ public class BookingActivity extends AppCompatActivity implements AdapterCallbac
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("result", "back");
+                setResult(Activity.RESULT_CANCELED, returnIntent);
+                finish();
+            }
+        });
+
+        ImageView fabButton = findViewById(R.id.fab);
+        fabButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getBaseContext(), "You booked " + numberOfSelectedSeats + " tickets successfully.", Toast.LENGTH_SHORT).show();
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("result", "finish_booking");
+                setResult(Activity.RESULT_OK, returnIntent);
                 finish();
             }
         });
@@ -77,6 +95,7 @@ public class BookingActivity extends AppCompatActivity implements AdapterCallbac
 
     @Override
     public void onMethodCallback(Integer numberOfSelectedSeats) {
+        this.numberOfSelectedSeats = numberOfSelectedSeats;
         TextView NumberOfTicketView = findViewById(R.id.number_ticket);
         NumberOfTicketView.setText("x" + numberOfSelectedSeats);
 

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,18 +63,23 @@ public class ShowTimeAdapter extends RecyclerView.Adapter<ShowTimeAdapter.TimeVi
             else {
                 holder.timeContainer.setBackgroundResource(R.drawable.available_border);
                 holder.timeItemView.setTextColor(Color.parseColor("#5E636A"));
-                holder.timeContainer.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.d("Inside clicked: ", String.valueOf(cinemaId));
-                        Integer clickedPosition = holder.getAdapterPosition();
-                        showtimeSelectionCallback.seatSelectionCallback(cinemaId, clickedPosition);
-                    }
-                });
             }
+            holder.timeContainer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Integer clickedPosition = holder.getAdapterPosition();
+                    showtimeSelectionCallback.seatSelectionCallback(cinemaId, clickedPosition);
+                }
+            });
         } else {
             holder.timeContainer.setBackgroundResource(R.drawable.unavailble_border);
             holder.timeItemView.setTextColor(Color.parseColor("#AFB5BB"));
+            holder.timeContainer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    return;
+                }
+            });
         }
 
     }

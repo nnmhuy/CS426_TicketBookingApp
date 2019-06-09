@@ -1,13 +1,16 @@
 package com.example.ticketbookingapp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ticketbookingapp.data.CinemaShowtimeRepository;
 import com.example.ticketbookingapp.data.DummyCinemaShowtimeDataSource;
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         votingScoreView.setText(movieInfo.getVoteScore().toString());
 
         TextView runtimeView = findViewById(R.id.runtime);
-        runtimeView.setText(movieInfo.getRuntime().toString());
+        runtimeView.setText(movieInfo.getRuntime().toString() + " mins");
 
         TextView synopsisView = findViewById(R.id.synopsis);
         synopsisView.setText(movieInfo.getSynopsis());
@@ -137,6 +140,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goNextPage(View view) {
+        Integer selectedDateId = dateAdapter.getSelectedDateId();
+        Integer selectedCinemaId = cinemaListAdapter.getSelectedCinemaId();
+        Integer selectedTimeId = cinemaListAdapter.getSelectedShowtimeId();
+
+        if (selectedDateId == -1 || selectedCinemaId == -1 || selectedTimeId == -1) {
+            Toast.makeText(this, "You must select date and showtime.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String selectedDate = dateAdapter.getSelectedDate();
         String selectedCinema = cinemaListAdapter.getSelectedCinema();
         String selectedTime = cinemaListAdapter.getSelectedShowtime();
@@ -146,6 +158,23 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("showday", selectedDate);
         intent.putExtra("cinema_name", selectedCinema);
         intent.putExtra("showtime", selectedTime);
-        startActivity(intent);
+        startActivityForResult(intent, 2019);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2019) {
+            if (resultCode == Activity.RESULT_OK) {
+                dateAdapter = new DateAdapter(this, listDates);
+                dateRecyclerView.setAdapter(dateAdapter);
+                dateRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+                dateAdapter.notifyDataSetChanged();
+                cinemaListAdapter = new CinemaListAdapter(this, cinemaList);
+                cinemaListRecyclerView.setAdapter(cinemaListAdapter);
+                cinemaListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            }
+        }
     }
 }

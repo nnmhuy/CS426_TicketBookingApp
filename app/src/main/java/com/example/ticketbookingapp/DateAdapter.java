@@ -17,7 +17,7 @@ public class DateAdapter extends RecyclerView.Adapter<DateAdapter.DateViewHolder
     private final List<Date> dateList;
     private LayoutInflater dateInflater;
     private String[] weekdayText = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT" };
-    private int selectedDate = 0;
+    private int selectedDate = -1;
 
     public DateAdapter(Context context, List<Date> dateList) {
         dateInflater = LayoutInflater.from(context);

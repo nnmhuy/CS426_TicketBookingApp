@@ -20,8 +20,8 @@ public class CinemaListAdapter extends RecyclerView.Adapter<CinemaListAdapter.Ci
     private  List<Parcelable> recyclerViewState = new ArrayList<>();
     private LayoutInflater cinemaListInflater;
     private Integer lastSelectedCinema = -1;
-    private Integer selectedCinema = 0;
-    private Integer selectedShowtime = 0;
+    private Integer selectedCinema = -1;
+    private Integer selectedShowtime = -1;
     Context context;
 
     CinemaListAdapter(Context context, List<Cinema> cinemaList) {
